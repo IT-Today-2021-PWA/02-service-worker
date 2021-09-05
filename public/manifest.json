@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "02 Service Worker",
+  "name": "02 Service Worker - IT Today 2021 PWA",
   "icons": [
     {
       "src": "favicon.ico",
