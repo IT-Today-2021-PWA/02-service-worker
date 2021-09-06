@@ -8,6 +8,5 @@ Untuk menjalankan source code di local, berikut langkah-langkah yang harus diiku
 
 1. Clone repo ini
 2. Masuk ke root direktori repo yang sudah di clone
-3. Instal dependencies dengan command `npm install` atau `yarn install`
-4. Jalankan server dengan command `npm run start` atau `yarn start`
-5. Buka url http://localhost:3000 di browser
+3. Jalankan command npx http-server public -p 3000 (perlu node.js)
+4. Buka url http://localhost:3000 di browser
