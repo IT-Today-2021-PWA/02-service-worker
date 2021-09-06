@@ -14,8 +14,11 @@ const PRECACHE_URLS = [
   './', // alias untuk index.html
   '404.html',
   '404/index.html',
+  './404', // alias untuk 404.html
   'bookmark/index.html',
+  './bookmark', // alias untuk bookmark.html
   'detail/index.html',
+  './detail', // alias untuk detail.html
   // style
   'style.css',
   // js
@@ -75,10 +78,11 @@ self.addEventListener('activate', event => {
 
 // Fetch di intercept biar bisa ngambil dari cache dulu
 self.addEventListener('fetch', event => {
-  // Skip request selain origin dan unpkg.com
+  // Skip request selain origin, unpkg.com, dan api
   if (
     event.request.url.startsWith(self.location.origin) ||
-    event.request.url.startsWith('https://unpkg.com')
+    event.request.url.startsWith('https://unpkg.com') ||
+    event.request.url === 'https://api.jikan.moe/v3/top/anime/1/airing'
   ) {
     event.respondWith(
       caches.match(event.request).then(cachedResponse => {
