@@ -16,7 +16,7 @@ function NavBar({activeTab = 'home'}) {
           <span>Home</span>
         </a>
         <a
-          href="/bookmark"
+          href="/bookmark/"
           className={`flex flex-col items-center py-2 ${activeTab === 'bookmark' && 'text-blue-700'}`}>
           <img
             className="w-6 h-6"
