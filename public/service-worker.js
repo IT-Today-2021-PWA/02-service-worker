@@ -4,7 +4,7 @@
 */
 
 // Kalau ada update di service worker, ganti nama cache-nya
-const PRECACHE = 'precache-v1.1';
+const PRECACHE = 'precache-v2.3';
 const RUNTIME = 'runtime';
 
 // List url yang mau di precache
@@ -79,7 +79,7 @@ self.addEventListener('activate', event => {
 // Fetch di intercept biar bisa ngambil dari cache dulu
 self.addEventListener('fetch', event => {
   // Strategy: cache first
-  // Skip request selain dari origin, unpkg.com, dan api tertentu
+  // Skip request selain dari origin dan unpkg.com
   if (
     event.request.url.startsWith(self.location.origin) ||
     event.request.url.startsWith('https://unpkg.com')
@@ -103,6 +103,21 @@ self.addEventListener('fetch', event => {
     event.respondWith(
       caches.match(event.request).then(cachedResponse => {
         return cachedResponse || putToRuntimeCache(event.request);
+      })
+    )
+  }
+
+  // Strategy: network first with fallback to cache
+  // Cuma buat api di detail page aja (yang sudah ditambah ke bookmark)
+  else if (
+    event.request.url.startsWith('https://api.jikan.moe/v3/anime')
+  ) {
+    event.respondWith(
+      caches.match(event.request).then(cachedResponse => {
+        if (cachedResponse) {
+          return putToRuntimeCache(event.request).catch(() => cachedResponse);
+        }
+        return fetch(event.request)
       })
     )
   }

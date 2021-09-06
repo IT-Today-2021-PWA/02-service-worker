@@ -14,7 +14,7 @@ function HomePage() {
 }
 
 function AnimeList({ title, api, onClickDetail }) {
-  const { status, value, execute } = utils.useAsync(api, true);
+  const { status, value, execute } = utils.useAsync(api);
 
   return (
     <section className="bg-white p-4 rounded-lg mb-8">

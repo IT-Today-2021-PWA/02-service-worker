@@ -2,6 +2,7 @@ window.api = {
   getTrendingAnime,
   getUpcomingAnime,
   getAnimeDetail,
+  getApiUrl,
 };
 
 const API_URL = 'https://api.jikan.moe/v3';

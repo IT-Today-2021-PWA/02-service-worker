@@ -1,26 +1,42 @@
 window.DetailPage = DetailPage
 
 function DetailPage({ url }) {
-  const id = url.searchParams.get('id')
+  const id = url.searchParams.get('id');
+  const apiUrl = api.getApiUrl(`/anime/${id}`);
 
   const apiGetAnimeDetail = React.useCallback(() => {
-    return api.getAnimeDetail(id)
-  }, [id])
+    return api.getAnimeDetail(id);
+  }, [id]);
 
   const { status, value, execute } = utils.useAsync(apiGetAnimeDetail);
 
   const getYoutubeUrl = (trailerUrl) => {
-    const url = new URL(trailerUrl)
-    const searchParams = ['enablejsapi', 'wmode', 'autoplay']
-    searchParams.forEach(key => url.searchParams.delete(key))
-    return url.toString()
+    const url = new URL(trailerUrl);
+    const searchParams = ['enablejsapi', 'wmode', 'autoplay'];
+    searchParams.forEach(key => url.searchParams.delete(key));
+    return url.toString();
   }
 
-  React.useEffect(() => {
-    document.body.style.overflow = 'hidden'
-    if (id) {
-      execute()
+  const [isBookmarked, setIsBookmarked] = React.useState(false);
+
+  const onClickBookmark = React.useCallback(() => {
+    if (value && !isBookmarked) {
+      caches.open('runtime').then(cache => {
+        cache.add(apiUrl);
+        setIsBookmarked(true);
+      });
     }
+  }, [value, id, isBookmarked, caches]);
+
+  React.useEffect(() => {
+    document.body.style.overflow = 'hidden';
+
+    caches.match(apiUrl).then(cachedResponse => {
+      if (cachedResponse) {
+        setIsBookmarked(true);
+      }
+    });
+
     return () => {
       document.body.style.overflow = 'auto'
     }
@@ -114,9 +130,13 @@ function DetailPage({ url }) {
                       </div>
                     </header>
                     <div className="flex items-center mb-4">
-                      <button className="flex items-center py-2 px-4 rounded-lg text-white bg-blue-700 hover:bg-blue-800">
+                      <button
+                        className={`flex items-center py-2 px-4 rounded-lg text-white ${isBookmarked ? 'bg-gray-400' : 'bg-blue-700 hover:bg-blue-800'}`}
+                        onClick={onClickBookmark}>
                         <img className="w-6 h-6 mr-2" src="/images/bookmark-white.svg" alt="" />
-                        <span>Bookmark This Page</span>
+                        <span>
+                          {isBookmarked ? 'Bookmarked' : 'Bookmark This Page'}
+                        </span>
                       </button>
                     </div>
                     <section>
