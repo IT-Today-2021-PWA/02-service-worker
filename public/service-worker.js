@@ -4,7 +4,7 @@
 */
 
 // Kalau ada update di service worker, ganti nama cache-nya
-const PRECACHE = 'precache-v1';
+const PRECACHE = 'precache-v2';
 const RUNTIME = 'runtime';
 
 // List url yang mau di precache
@@ -21,11 +21,11 @@ const PRECACHE_URLS = [
   // js
   'js/utils.js',
   'js/api.js',
-  'js/components/NavBar.js',
-  'js/pages/BookmarkPage.js',
-  'js/pages/DetailPage.js',
-  'js/pages/HomePage.js',
-  'js/app.js',
+  'js/components/NavBar.jsx',
+  'js/pages/BookmarkPage.jsx',
+  'js/pages/DetailPage.jsx',
+  'js/pages/HomePage.jsx',
+  'js/app.jsx',
   // images
   'images/arrow-left.svg',
   'images/bookmark-blue.svg',
