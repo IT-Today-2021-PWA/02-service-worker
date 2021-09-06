@@ -78,23 +78,42 @@ self.addEventListener('activate', event => {
 
 // Fetch di intercept biar bisa ngambil dari cache dulu
 self.addEventListener('fetch', event => {
+  // Strategy: cache first
   // Skip request selain dari origin, unpkg.com, dan api tertentu
   if (
     event.request.url.startsWith(self.location.origin) ||
-    event.request.url.startsWith('https://unpkg.com') ||
-    event.request.url === 'https://api.jikan.moe/v3/top/anime/1/airing'
+    event.request.url.startsWith('https://unpkg.com')
   ) {
     event.respondWith(
       caches.match(event.request, {ignoreSearch: true}).then(cachedResponse => {
         if (cachedResponse) {
           return cachedResponse
         }
-        return caches.open(RUNTIME).then(cache => {
-          return fetch(event.request).then(response => {
-            return cache.put(event.request, response.clone()).then(() => response);
-          });
-        });
+        return putToRuntimeCache(event.request);
       })
     );
   }
+
+  // Strategy: stale while revalidate
+  // Cuma buat api di homepage aja + image poster
+  else if (
+    event.request.url.startsWith('https://api.jikan.moe/v3/top/anime') ||
+    event.request.url.startsWith('https://cdn.myanimelist.net/images/anime')
+  ) {
+    event.respondWith(
+      caches.match(event.request).then(cachedResponse => {
+        return cachedResponse || putToRuntimeCache(event.request);
+      })
+    )
+  }
 });
+
+function putToRuntimeCache(request) {
+  return caches.open(RUNTIME).then(cache => {
+    return fetch(request).then(response => {
+      return cache.put(request, response.clone()).then(() => response);
+    });
+  })
+}
+
+// Coba bikin gimana caranya bikin fallback offline untuk 404.html :D
