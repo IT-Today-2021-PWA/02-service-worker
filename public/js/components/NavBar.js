@@ -20,7 +20,7 @@ function NavBar({activeTab = 'home'}) {
           className={`flex flex-col items-center py-2 ${activeTab === 'bookmark' && 'text-blue-700'}`}>
           <img
             className="w-6 h-6"
-            src={activeTab === 'bookmark' ? '/image/bookmark-blue.svg' : '/images/bookmark.svg'}
+            src={activeTab === 'bookmark' ? '/images/bookmark-blue.svg' : '/images/bookmark.svg'}
             alt=""
           />
           <span>Bookmark</span>

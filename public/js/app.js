@@ -13,6 +13,8 @@ function getComponent(root) {
       return <HomePage url={url} />;
     case 'detail':
       return <DetailPage url={url} />;
+    case 'bookmark':
+      return <BookmarkPage url={url} />;
     default:
       return <h1>Page Not Found</h1>;
   }
