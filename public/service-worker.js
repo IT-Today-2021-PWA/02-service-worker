@@ -75,19 +75,25 @@ self.addEventListener('activate', event => {
 
 // Fetch di intercept biar bisa ngambil dari cache dulu
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(cachedResponse => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
+  // Skip request selain origin dan unpkg.com
+  if (
+    event.request.url.startsWith(self.location.origin) ||
+    event.request.url.startsWith('https://unpkg.com')
+  ) {
+    event.respondWith(
+      caches.match(event.request).then(cachedResponse => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
 
-      return caches.open(RUNTIME).then(cache => {
-        return fetch(event.request).then(response => {
-          return cache.put(event.request, response.clone()).then(() => {
-            return response;
+        return caches.open(RUNTIME).then(cache => {
+          return fetch(event.request).then(response => {
+            return cache.put(event.request, response.clone()).then(() => {
+              return response;
+            });
           });
         });
-      });
-    })
-  );
+      })
+    );
+  }
 });
