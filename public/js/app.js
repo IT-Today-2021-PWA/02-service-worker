@@ -6,9 +6,13 @@ ReactDOM.render(
 );
 
 function getComponent(root) {
+  const url = new URL(window.location.href)
+
   switch (root.dataset.app) {
     case 'home':
-      return <HomePage />;
+      return <HomePage url={url} />;
+    case 'detail':
+      return <DetailPage url={url} />;
     default:
       return <h1>Page Not Found</h1>;
   }
