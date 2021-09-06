@@ -30,7 +30,7 @@ function AnimeList({ title, api }) {
         status === 'success' && (
           <ul className="grid grid-cols-2 sm:grid-cols-3 gap-y-10 gap-x-6">
             {
-              value.data.top.slice(0, 10).map((item, index) => (
+              value.data.top.slice(0, 12).map((item, index) => (
                 <li key={index}>
                   <div>
                     <figure className="mb-2">
