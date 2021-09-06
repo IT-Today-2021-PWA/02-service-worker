@@ -113,6 +113,12 @@ function DetailPage({ url }) {
                         </dl>
                       </div>
                     </header>
+                    <div className="flex items-center mb-4">
+                      <button className="flex items-center py-2 px-4 rounded-lg text-white bg-blue-700 hover:bg-blue-800">
+                        <img className="w-6 h-6 mr-2" src="/images/bookmark-white.svg" alt="" />
+                        <span>Bookmark This Page</span>
+                      </button>
+                    </div>
                     <section>
                       <h3 className="font-semibold mb-2">Synopsis</h3>
                       <p>{value.data.synopsis}</p>
