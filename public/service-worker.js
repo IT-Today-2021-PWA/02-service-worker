@@ -78,31 +78,20 @@ self.addEventListener('activate', event => {
 
 // Fetch di intercept biar bisa ngambil dari cache dulu
 self.addEventListener('fetch', event => {
-  // Bersihkan url dari query param
-  const url = new URL(event.request.url)
-  url.search = ''
-  const cleanRequest = new Request(url, {
-    method: event.request.method,
-    headers: event.request.headers,
-    mode: event.request.mode,
-    credentials: event.request.credentials,
-    cache: event.request.cache,
-    redirect: event.request.redirect,
-    referrer: event.request.referrer,
-    integrity: event.request.integrity,
-  });
-
   // Skip request selain dari origin, unpkg.com, dan api tertentu
   if (
-    cleanRequest.url.startsWith(self.location.origin) ||
-    cleanRequest.url.startsWith('https://unpkg.com') ||
-    cleanRequest.url === 'https://api.jikan.moe/v3/top/anime/1/airing'
+    event.request.url.startsWith(self.location.origin) ||
+    event.request.url.startsWith('https://unpkg.com') ||
+    event.request.url === 'https://api.jikan.moe/v3/top/anime/1/airing'
   ) {
     event.respondWith(
-      caches.match(cleanRequest).then(cachedResponse => {
-        return cachedResponse || caches.open(RUNTIME).then(cache => {
-          return fetch(cleanRequest).then(response => {
-            return cache.put(cleanRequest, response.clone()).then(() => response);
+      caches.match(event.request, {ignoreSearch: true}).then(cachedResponse => {
+        if (cachedResponse) {
+          return cachedResponse
+        }
+        return caches.open(RUNTIME).then(cache => {
+          return fetch(event.request).then(response => {
+            return cache.put(event.request, response.clone()).then(() => response);
           });
         });
       })
