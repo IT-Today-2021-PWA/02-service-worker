@@ -1,17 +1,23 @@
 window.api = {
   getTrendingAnime,
   getUpcomingAnime,
-  getMostFavoriteAnime,
+  getAnimeDetail,
 };
 
+const API_URL = 'https://api.jikan.moe/v3';
+
+function getApiUrl(path) {
+  return API_URL + path;
+}
+
 function getTrendingAnime() {
-  return axios.get('https://api.jikan.moe/v3/top/anime/1/airing');
+  return axios.get(getApiUrl('/top/anime/1/airing'));
 }
 
 function getUpcomingAnime() {
-  return axios.get('https://api.jikan.moe/v3/top/anime/1/upcoming');
+  return axios.get(getApiUrl('/top/anime/1/upcoming'));
 }
 
-function getMostFavoriteAnime() {
-  return axios.get('https://api.jikan.moe/v3/top/anime/1');
+function getAnimeDetail(id) {
+  return axios.get(getApiUrl(`/anime/${id}`));
 }
