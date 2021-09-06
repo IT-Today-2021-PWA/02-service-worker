@@ -4,7 +4,7 @@
 */
 
 // Kalau ada update di service worker, ganti nama cache-nya
-const PRECACHE = 'precache-v2';
+const PRECACHE = 'precache-v1.1';
 const RUNTIME = 'runtime';
 
 // List url yang mau di precache
@@ -62,9 +62,9 @@ self.addEventListener('install', event => {
   );
 });
 
-// Handler activate untuk cleanup caches
+// Handler activate untuk cleanup caches yang gak ada di precache
 self.addEventListener('activate', event => {
-  const currentCaches = [PRECACHE, RUNTIME];
+  const currentCaches = [PRECACHE];
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return cacheNames.filter(cacheName => !currentCaches.includes(cacheName));
@@ -78,23 +78,31 @@ self.addEventListener('activate', event => {
 
 // Fetch di intercept biar bisa ngambil dari cache dulu
 self.addEventListener('fetch', event => {
-  // Skip request selain origin, unpkg.com, dan api
+  // Bersihkan url dari query param
+  const url = new URL(event.request.url)
+  url.search = ''
+  const cleanRequest = new Request(url, {
+    method: event.request.method,
+    headers: event.request.headers,
+    mode: event.request.mode,
+    credentials: event.request.credentials,
+    cache: event.request.cache,
+    redirect: event.request.redirect,
+    referrer: event.request.referrer,
+    integrity: event.request.integrity,
+  });
+
+  // Skip request selain dari origin, unpkg.com, dan api tertentu
   if (
-    event.request.url.startsWith(self.location.origin) ||
-    event.request.url.startsWith('https://unpkg.com') ||
-    event.request.url === 'https://api.jikan.moe/v3/top/anime/1/airing'
+    cleanRequest.url.startsWith(self.location.origin) ||
+    cleanRequest.url.startsWith('https://unpkg.com') ||
+    cleanRequest.url === 'https://api.jikan.moe/v3/top/anime/1/airing'
   ) {
     event.respondWith(
-      caches.match(event.request).then(cachedResponse => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-
-        return caches.open(RUNTIME).then(cache => {
-          return fetch(event.request).then(response => {
-            return cache.put(event.request, response.clone()).then(() => {
-              return response;
-            });
+      caches.match(cleanRequest).then(cachedResponse => {
+        return cachedResponse || caches.open(RUNTIME).then(cache => {
+          return fetch(cleanRequest).then(response => {
+            return cache.put(cleanRequest, response.clone()).then(() => response);
           });
         });
       })
