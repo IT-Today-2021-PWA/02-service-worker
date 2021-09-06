@@ -11,7 +11,7 @@ function DetailPage({ url }) {
 
   const getYoutubeUrl = (trailerUrl) => {
     const url = new URL(trailerUrl)
-    const searchParams = ['enablejsapi', 'mode', 'autoplay']
+    const searchParams = ['enablejsapi', 'wmode', 'autoplay']
     searchParams.forEach(key => url.searchParams.delete(key))
     return url.toString()
   }
