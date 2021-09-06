@@ -7,11 +7,12 @@ function HomePage() {
 
   return (
     <main className="min-h-screen">
-      <div className="max-w-2xl mx-auto px-4">
+      <div className="max-w-2xl mx-auto px-4 pb-16">
         <h1 className="mt-4 mb-4 text-blue-700 text-xl font-bold">MyAnimeList</h1>
         <AnimeList title="Trending Anime" api={api.getTrendingAnime} onClickDetail={onClickDetail} />
         <AnimeList title="Upcoming Anime" api={api.getUpcomingAnime} onClickDetail={onClickDetail} />
       </div>
+      <NavBar />
     </main>
   );
 }
