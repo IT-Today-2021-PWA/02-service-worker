@@ -39,11 +39,22 @@ const PRECACHE_URLS = [
   'images/refresh.svg',
 ];
 
+const PRECACHE_EXTERNAL_URLS = [
+  'https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css',
+  'https://unpkg.com/react@17/umd/react.production.min.js',
+  'https://unpkg.com/react-dom@17/umd/react-dom.production.min.js',
+  'https://unpkg.com/@babel/standalone/babel.min.js',
+  'https://unpkg.com/axios/dist/axios.min.js',
+];
+
 // Di trigger waktu PWA pertama kali diinstal
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(PRECACHE)
-      .then(cache => cache.addAll(PRECACHE_URLS))
+      .then(cache => {
+        const urls = [...PRECACHE_URLS, ...PRECACHE_EXTERNAL_URLS]
+        cache.addAll(urls)
+      })
       .then(self.skipWaiting())
   );
 });
@@ -64,22 +75,19 @@ self.addEventListener('activate', event => {
 
 // Fetch di intercept biar bisa ngambil dari cache dulu
 self.addEventListener('fetch', event => {
-  // Skip request cross-origin
-  if (event.request.url.startsWith(self.location.origin)) {
-    event.respondWith(
-      caches.match(event.request).then(cachedResponse => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
+  event.respondWith(
+    caches.match(event.request).then(cachedResponse => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
 
-        return caches.open(RUNTIME).then(cache => {
-          return fetch(event.request).then(response => {
-            return cache.put(event.request, response.clone()).then(() => {
-              return response;
-            });
+      return caches.open(RUNTIME).then(cache => {
+        return fetch(event.request).then(response => {
+          return cache.put(event.request, response.clone()).then(() => {
+            return response;
           });
         });
-      })
-    );
-  }
+      });
+    })
+  );
 });
