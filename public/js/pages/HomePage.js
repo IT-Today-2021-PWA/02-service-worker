@@ -4,7 +4,7 @@ function HomePage() {
   return (
     <main className="min-h-screen">
       <div className="max-w-2xl mx-auto px-4">
-        <h1 className="my-4 text-xl font-bold">MyAnimeList</h1>
+        <h1 className="mt-4 mb-8 text-xl font-bold">MyAnimeList</h1>
         <AnimeList title="Trending Anime" api={api.getTrendingAnime} />
         <AnimeList title="Upcoming Anime" api={api.getUpcomingAnime} />
       </div>
@@ -13,7 +13,7 @@ function HomePage() {
 }
 
 function AnimeList({ title, api }) {
-  const { status, value, error } = utils.useAsync(api, true);
+  const { status, value, execute } = utils.useAsync(api, true);
 
   return (
     <section className="bg-white p-4 rounded-lg mb-8">
@@ -42,6 +42,20 @@ function AnimeList({ title, api }) {
               ))
             }
           </ul>
+        )
+      }
+      {
+        status === 'error' && (
+          <div className="py-4 text-center">
+            <p>Fetching data is error.</p>
+            <p>Try again later by clicking on the refresh button.</p>
+            <div className="mt-2">
+              <button className="inline-flex items-center px-2 py-1 rounded-lg border border-gray-400" onClick={execute}>
+                <img className="w-4 h-4 mr-2" src="/images/refresh.svg" alt="" />
+                <span>Refresh</span>
+              </button>
+            </div>
+          </div>
         )
       }
     </section>
