@@ -62,16 +62,21 @@ self.addEventListener('install', event => {
   );
 });
 
-// Handler activate untuk cleanup caches yang gak ada di precache
+// Handler activate untuk cleanup caches
 self.addEventListener('activate', event => {
   const currentCaches = [PRECACHE];
   event.waitUntil(
     caches.keys().then(cacheNames => {
-      return cacheNames.filter(cacheName => !currentCaches.includes(cacheName));
-    }).then(cachesToDelete => {
-      return Promise.all(cachesToDelete.map(cacheToDelete => {
-        return caches.delete(cacheToDelete);
-      }));
+      return Promise.all(
+        cacheNames
+          .filter(cacheName => {
+            // Return true kalau cache-nya mau dihapus
+            return !currentCaches.includes(cacheName);
+          })
+          .map(cacheName => {
+            return caches.delete(cacheName);
+          })
+      );
     }).then(() => self.clients.claim())
   );
 });
