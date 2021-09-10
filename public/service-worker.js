@@ -107,7 +107,8 @@ self.addEventListener('fetch', event => {
   ) {
     event.respondWith(
       caches.match(event.request).then(cachedResponse => {
-        return cachedResponse || putToRuntimeCache(event.request);
+        const request = putToRuntimeCache(event.request);
+        return cachedResponse || request;
       })
     )
   }
