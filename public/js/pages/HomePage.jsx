@@ -13,7 +13,7 @@ function HomePage() {
   );
 }
 
-function AnimeList({ title, api, onClickDetail }) {
+function AnimeList({ title, api }) {
   const { status, value, execute } = utils.useAsync(api);
 
   return (

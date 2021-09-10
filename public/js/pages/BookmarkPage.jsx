@@ -27,7 +27,7 @@ function BookmarkPage() {
             {value.map((item, index) => (
               <li key={index}>
                 <a href={`/detail/?id=${item.mal_id}`}>
-                  <div className="bg-white rounded-lg shadow flex p-2">
+                  <div className="bg-white rounded-lg shadow flex p-2 mb-4">
                     <figure className="flex-none" style={{width: '96px'}}>
                       <img className="w-full rounded-lg" src={item.image_url} alt={`Poster for ${item.title}`}/>
                     </figure>
